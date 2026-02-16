@@ -1,0 +1,624 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Timeline</title>
+
+
+    <!-- load handlebars for templating, and create a template -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+    <script id="item-template" type="text/x-handlebars-template">
+      <img src="./images/{{unit1_ele}}.png"> {{unit1}}
+      {{#if unit2}}
+      <br><img src="./images/{{unit2_ele}}.png"> {{unit2}}
+      {{/if}}
+      {{#if note}}
+      <br><br>{{note}}
+      {{/if}}
+      
+      {{#if limited}}
+      <br><br><b>Limited Banner</b>
+      {{/if}}
+      
+      {{#if event}}
+      <br><br>Event Story Banner
+      {{/if}}
+      
+      {{#if unscheduled}}
+      <br><br>Unscheduled Banner
+      {{/if}}
+      <br><br>
+      <span class="banner">
+        <img src="./images/unnamed({{img}}).jpg">
+      </span>
+    </script>
+
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"
+    ></script>
+    <link
+      href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <style type="text/css">
+      body {
+        overflow: hidden;
+        background: #333;
+        color: #f0f0f0;
+      }
+
+      input[type="checkbox"] {
+          width: 20px;
+          height: 20px;
+      }
+
+      label {
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-size: 12pt;
+      }
+
+      #show_story {
+        accent-color: #d5ddf6;
+      }
+
+      #show_event {
+        accent-color: #fce5cd;
+      }
+
+      #show_unscheduled {
+        accent-color: #f0f0f0;
+      }
+
+      #show_limited {
+        accent-color: #f4cccc;
+      }
+
+      #show_collab {
+        accent-color: #c9daf8;
+      }
+
+      #visualization {
+        height: 100%;
+        border: 1px solid lightgray;
+        background: #000;
+      }
+
+      #visualization .vis-text {
+        color: #f0f0f0;
+      }
+
+      /* Hides the entire background with all of the grid lines */
+      /* .vis-background {
+        display: none;
+      } */
+
+      .vis-timeline {
+        min-height: 750px;
+      }
+
+      .vis-item {
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-size: 20px;
+      }
+
+      .vis-item.vis-dot {
+        border-width: 8px;
+        border-radius: 8px;
+      }
+
+      .vis-item.vis-line {
+        border-width: 3px;
+      }
+
+      /* Until I can figure out how to draw just the line DOWN from the x-axis, hide all the grid lines for the days */
+      .vis-time-axis .vis-grid.vis-minor {
+        border-width: 0px;
+      }
+
+      .vis-time-axis .vis-grid.vis-major {
+        border-width: 2px;
+      }
+      
+      /* Alternate the background colours for each month */
+      /* .vis-february, .vis-april, .vis-june, .vis-august, .vis-october, .vis-december {
+        background: #333;
+      } */
+
+      .vis-item.mainstory {
+        background: #d5ddf6
+      }
+
+      .vis-item.event {
+        background: #fce5cd;
+      }
+
+      .vis-item.unscheduled {
+        background: #f0f0f0
+      }
+
+      .vis-item.limited {
+        background: #f4cccc;
+      }
+
+      .vis-item.collab {
+        background: #c9daf8;
+      }
+
+      .vis-item-content span img {
+        width: 360px;
+        height: 166px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="visualization"></div>
+    <script type="text/javascript">
+      // create a handlebars template
+      var source = document.getElementById("item-template").innerHTML;
+      var template = Handlebars.compile(
+        document.getElementById("item-template").innerHTML,
+      );
+
+      // DOM element where the Timeline will be attached
+      var container = document.getElementById("visualization");
+
+      // Create a DataSet (allows two way data-binding)
+      var items = new vis.DataSet([
+        {
+          img: 85
+          , unit1: "Tsukasa Tojo 5"
+          , unit1_ele: "ice"
+          , unit2: "Bon Ivar Yamawaki 4"
+          , unit2_ele: "ice"
+          , note: "Released with Chapter 5.2.2"
+          , start: "2025-02-20"
+          , title: "2025-02-20"
+          , className: "mainstory"
+          , story: true
+        },
+        {
+          img: 86
+          , unit1: "Monaka Tsukishiro 3"
+          , unit1_ele: "light"
+          , unit2: "Chie Sugawara 4"
+          , unit2_ele: "light"
+          , start: "2025-03-06"
+          , title: "2025-03-06"
+          , className: "event"
+          , event: true
+        },
+        {
+          img: 87
+          , unit1: "Ichiko Ohshima 3"
+          , unit1_ele: "light"
+          , start: "2025-03-20"
+          , title: "2025-03-20"
+          , className: "unscheduled"
+          , unscheduled: true
+          , note: "Light Overwriter"
+        },
+        {
+          img: 88
+          , unit1: "Irene Redmayne 3"
+          , unit1_ele: "null"
+          , unit2: "Maria de Angelis 3"
+          , unit2_ele: "fire"
+          , start: "2025-04-03"
+          , title: "2025-04-03"
+          , className: "event"
+          , event: true
+        },
+        {
+          img: 89
+          , unit1: "Yayoi Bungo (Unison)"
+          , unit1_ele: "null"
+          , start: "2025-04-24"
+          , title: "2025-04-24"
+          , className: "limited"
+          , unscheduled: true
+          , limited: true
+        },
+        {
+          img: 90
+          , unit1: "Seira Sakuraba 4 (Minion)"
+          , unit1_ele: "null"
+          , unit2: "Miko Tenne 4 (Minion)"
+          , unit2_ele: "null"
+          , start: "2025-05-01"
+          , title: "2025-05-01"
+          , className: "event"
+          , event: true
+        },
+        {
+          img: 91
+          , unit1: "Yotsuha Ohshima"
+          , unit1_ele: "dark"
+          , start: "2025-05-15"
+          , title: "2025-05-15"
+          , className: "unscheduled"
+          , unscheduled: true
+        },
+        {
+          img: 92
+          , unit1: "Mion Yanagi 3 (Admiral)"
+          , unit1_ele: "null"
+          , unit2: "Chiroru Matsuoka"
+          , unit2_ele: "thunder"
+          , start: "2025-05-29"
+          , title: "2025-05-29"
+          , className: "unscheduled"
+          , unscheduled: true
+        },
+        {
+          img: 93
+          , unit1: "Iroha Ishii 3 (Bride)"
+          , unit1_ele: "thunder"
+          , unit2: "Yingxia Li (Bride)"
+          , unit2_ele: "null"
+          , start: "2025-06-12"
+          , title: "2025-06-12"
+          , className: "event"
+          , note: "Snap Event Banner"
+        },
+        {
+          img: 94
+          , unit1: "Seika Higuchi 4 (Swimsuit)"
+          , unit1_ele: "fire"
+          , unit2: "Kozue Hiiragi 4 (Swimsuit)"
+          , unit2_ele: "dark"
+          , start: "2025-06-26"
+          , title: "2025-06-26"
+          , className: "event"
+          , event: true
+        },
+        {
+          img: 95
+          , unit1: "Muua Ohshima 3 (Summer)"
+          , unit1_ele: "null"
+          , unit2: "Niina Ohshima 3 (Summer)"
+          , unit2_ele: "dark"
+          , start: "2025-07-10"
+          , title: "2025-07-10"
+          , className: "unscheduled"
+          , unscheduled: true
+        },
+        {
+          img: 96
+          , unit1: "Erika Aoi (Summer)"
+          , unit1_ele: "dark"
+          , unit2: "Byakko S (Summer)"
+          , unit2_ele: "null"
+          , start: "2025-07-17"
+          , title: "2025-07-17"
+          , className: "unscheduled"
+          , unscheduled: true
+        },
+        {
+          img: 97
+          , unit1: "Satomi Kura 3 (Summer)"
+          , unit1_ele: "null"
+          , unit2: "Miya Kiryu 4 (Summer)"
+          , unit2_ele: "fire"
+          , start: "2025-08-03"
+          , title: "2025-08-03"
+          , className: "event"
+          , event: true
+        },
+        {
+          img: 98
+          , unit1: "Karen Asakura (Unison)"
+          , unit1_ele: "null"
+          , start: "2025-08-09"
+          , title: "2025-08-09"
+          , className: "limited"
+          , unscheduled: true
+          , limited: true
+        },
+        {
+          img: 99
+          , unit1: "Mari Satsuki 5 (Minion)"
+          , unit1_ele: "null"
+          , unit2: "Aina Mizuhara 4 (Summer)"
+          , unit2_ele: "thunder"
+          , start: "2025-08-21"
+          , title: "2025-08-21"
+          , className: "unscheduled"
+          , unscheduled: true
+        },
+        {
+          img: 100
+          , unit1: "Vritika Balakrishnan 3"
+          , unit1_ele: "null"
+          , unit2: "Carole Reaper 3"
+          , unit2_ele: "thunder"
+          , start: "2025-09-04"
+          , title: "2025-09-04"
+          , className: "event"
+          , event: true
+        },
+        {
+          img: 101
+          , unit1: "Charlotta Skopovskaya 4"
+          , unit1_ele: "null"
+          , start: "2025-09-18"
+          , title: "2025-09-18"
+          , className: "unscheduled"
+          , unscheduled: true
+        },
+        {
+          img: 102
+          , unit1: "Ruka Kayamori 6 (Baseball)"
+          , unit1_ele: "null"
+          , start: "2025-10-02"
+          , title: "2025-10-02"
+          , className: "collab"
+          , note: "Power Pro Baseball Collab"
+          , limited: true
+          , collab: true
+        },
+        {
+          img: 103
+          , unit1: "Ichigo Minase 3 (Baseball)"
+          , unit1_ele: "light"
+          , start: "2025-10-09"
+          , title: "2025-10-09"
+          , className: "collab"
+          , note: "Power Pro Baseball Collab"
+          , limited: true
+          , collab: true
+        },
+        {
+          img: 104
+          , unit1: "Sumomo Minase 4 (Halloween)"
+          , unit1_ele: "ice"
+          , unit2: "Tama Kunimi 6 (Halloween)"
+          , unit2_ele: "ice"
+          , start: "2025-10-16"
+          , title: "2025-10-16"
+          , className: "unscheduled"
+          , unscheduled: true
+        },
+        {
+          img: 105
+          , unit1: "Isuzu Ohshima 4"
+          , unit1_ele: "dark"
+          , unit2: "Minori Ohshima 4"
+          , unit2_ele: "light"
+          , start: "2025-10-30"
+          , title: "2025-10-30"
+          , className: "event"
+          , event: true
+        },
+        {
+          img: 106
+          , unit1: "Ivar Bon Yamawaki 5 (Unison)"
+          , unit1_ele: "dark"
+          , start: "2025-11-13"
+          , title: "2025-11-13"
+          , className: "limited"
+          , limited: true
+          , unscheduled: true
+        },
+        {
+          img: 107
+          , unit1: "Irene Redmayne 4"
+          , unit1_ele: "null"
+          , unit2: "Kanata Maruyama 3"
+          , unit2_ele: "thunder"
+          , start: "2025-11-27"
+          , title: "2025-11-27"
+          , className: "event"
+          , event: true
+        },
+        {
+          img: 108
+          , unit1: "Adelheid Kanzaki 5 (Minion)"
+          , unit1_ele: "dark"
+          , start: "2025-12-11"
+          , title: "2025-12-11"
+          , className: "unscheduled"
+          , unscheduled: true
+        },
+        {
+          img: 109
+          , unit1: "Ruka Kayamori 7 (Admiral)"
+          , unit1_ele: "ice"
+          , unit2: "Yuina Shirakawa 6 (Admiral)"
+          , unit2_ele: "fire"
+          , start: "2025-12-25"
+          , title: "2025-12-25"
+          , note: "Released with Chapter 5.3"
+          , className: "mainstory"
+          , story: true
+        },
+        {
+          img: 110
+          , unit1: "Erika Aoi 6 (White Suit)"
+          , unit1_ele: "ice"
+          , start: "2026-01-15"
+          , title: "2026-01-15"
+          , className: "unscheduled"
+          , unscheduled: true
+        },
+        {
+          img: 111
+          , unit1: "Nanami Nanase 2 (Admiral)"
+          , unit1_ele: "thunder"
+          , start: "2026-02-01"
+          , title: "2026-02-01"
+          , className: "limited"
+          , event: true
+          , limited: true
+        },
+        {
+          img: 112
+          , unit1: "Saki Tezuka"
+          , unit1_ele: "thunder"
+          , start: "2026-02-12"
+          , title: "2026-02-12"
+          , className: "limited"
+          , unscheduled: true
+          , limited: true
+        },
+      ]);
+
+      // Configuration for the Timeline
+      var options = {
+        selectable: false
+        , autoResize: false
+        //, zoomMax: 5875000000
+        , min: new Date("2025-02-11")
+        , max: new Date("2026-02-28")
+        , template: template
+      };
+
+      // Create a Timeline
+      var timeline = new vis.Timeline(container, items, options);
+
+      // Each of the subcollection within the data set, for toggling
+      var items_story = items.get({
+        filter: function(item) {
+          return item.story;
+        }
+      })
+
+      var items_event = items.get({
+        filter: function(item) {
+          return item.event;
+        }
+      })
+
+      var items_unscheduled = items.get({
+        filter: function(item) {
+          return item.unscheduled;
+        }
+      })
+
+      var items_limited = items.get({
+        filter: function(item) {
+          return item.limited;
+        }
+      })
+
+      var items_collab = items.get({
+        filter: function(item) {
+          return item.collab;
+        }
+      })
+
+/*       // Flags re: which banner types are visible
+      var show_story = true;
+      var show_event = true;
+      var show_unscheduled = true;
+      var show_limited = true;
+      var show_collab = true; */
+
+      // Functions for toggling banner visibility
+      function toggleVisibility(is_visible, items_to_toggle) {
+        // Hide them
+        if (is_visible) {
+          items.remove(items_to_toggle);
+        }
+        // Show them
+        else {
+          items.add(items_to_toggle);
+        }
+      }
+
+      // For navigating to either extreme of the timeline
+      function viewEarliest() {
+        timeline.moveTo("2022-01-01"); // an arbitrarily early date
+      }
+
+      function viewLatest() {
+        timeline.moveTo(new Date());
+      }
+
+      // After the page loads, set the initial date range and max zoom level to avoid wonkiness, like floating nodes that don't belong in the current time window
+      window.onload = function() {
+        // Set the initial visible range starting from the current day minus one year (to approx. mimic where Global is in the timeline)
+        initialStartDate = new Date();
+        initialStartDate.setFullYear(2025);
+        initialStartDate.setHours(0, 0, 0, 0);
+
+        console.log("Start Date = " + initialStartDate);
+
+        initialEndDate = new Date(initialStartDate);
+        initialEndDate.setMonth(initialEndDate.getMonth() + 2);
+        initialEndDate.setDate(initialEndDate.getDate() + 8);
+
+        console.log("End Date = " + initialEndDate);
+
+        timeline.setOptions(
+          {
+            zoomMax: 5875000000
+            , start: new Date(initialStartDate)
+            , end: new Date(initialEndDate)
+          }
+        );
+        timeline.redraw();
+      }
+    </script>
+    
+    <div style="position:absolute; top: 40px; left: 40px; background: #555; border: 2px solid #ddd; padding: 10px 20px;">
+      <div><button id="btn_earliest" onclick="viewEarliest()"><<</button> <label for="btn_earliest">Go to Beginning</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="btn_latest">Go to End</label> <button id="btn_latest" onclick="viewLatest()">>></button></div>
+      <br>
+      <div><input id="show_story" type="checkbox" checked /> <label for="show_story">Main Story Banners</label></div>
+      <div><input id="show_event" type="checkbox" checked /> <label for="show_event">Event Banners</label></div>
+      <div><input id="show_unscheduled" type="checkbox" checked /> <label for="show_unscheduled">Unscheduled Banners</label></div>
+      <div><input id="show_limited" type="checkbox" checked /> <label for="show_limited">Limited Banners</label></div>
+      <div><input id="show_collab" type="checkbox" checked /> <label for="show_collab">Collab Banners</label></div>
+    </div>
+
+    <script type="text/javascript">
+      const checkbox_story = document.getElementById('show_story')
+      const checkbox_event = document.getElementById('show_event')
+      const checkbox_unscheduled = document.getElementById('show_unscheduled')
+      const checkbox_limited = document.getElementById('show_limited')
+      const checkbox_collab = document.getElementById('show_collab')
+
+      checkbox_story.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+          toggleVisibility(false, items_story);
+        } else {
+          toggleVisibility(true, items_story);
+        }
+      })
+
+      checkbox_event.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+          toggleVisibility(false, items_event);
+        } else {
+          toggleVisibility(true, items_event);
+        }
+      })
+
+      checkbox_unscheduled.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+          toggleVisibility(false, items_unscheduled);
+        } else {
+          toggleVisibility(true, items_unscheduled);
+        }
+      })
+
+      checkbox_limited.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+          toggleVisibility(false, items_limited);
+        } else {
+          toggleVisibility(true, items_limited);
+        }
+      })
+
+      checkbox_collab.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+          toggleVisibility(false, items_collab);
+        } else {
+          toggleVisibility(true, items_collab);
+        }
+      })
+    </script>
+  </body>
+</html>
