@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Timeline</title>
+    <title>HBR JP Banner Timeline</title>
 
 
     <!-- load handlebars for templating, and create a template -->
@@ -265,7 +265,7 @@
           , start: "2025-06-12"
           , title: "2025-06-12"
           , className: "event"
-          , note: "Snap Event Banner"
+          , note: "Snap Event"
           , event: true
         },
         {
@@ -471,7 +471,7 @@
       ]);
 
       // Used for the upper and lower bounds of the timeline
-      var min_date = "2025-02-11";
+      var min_date = "2025-02-16";
       var max_date = "2026-02-28";
 
       // Configuration for the Timeline
@@ -579,6 +579,7 @@
         timeline.setOptions(
           {
             zoomMax: 5875000000
+            , zoomMin: 604800000
             , start: new Date(initialStartDate)
             , end: new Date(initialEndDate)
           }
