@@ -542,7 +542,7 @@
       }
 
       function viewEarlier() {
-        window_start = new Date(timeline.getWindow().start);
+        window_start = new Date(timeline.getWindow().end);
         window_start.setMonth(window_start.getMonth() - 3);
         console.log("View banners starting from " + window_start);
         timeline.moveTo(window_start);
