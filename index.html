@@ -477,7 +477,8 @@
       // Configuration for the Timeline
       var options = {
         selectable: false
-        , autoResize: false
+        , autoResize: true
+        , zoomable: false
         //, zoomMax: 5875000000
         , min: new Date(min_date)
         , max: new Date(max_date)
@@ -588,7 +589,7 @@
         timeline.setOptions(
           {
             zoomMax: 5875000000
-            , zoomMin: 604800000
+            , zoomMin: 5875000000 //604800000
             , start: new Date(initialStartDate)
             , end: new Date(initialEndDate)
           }
