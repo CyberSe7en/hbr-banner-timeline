@@ -471,7 +471,7 @@
       ]);
 
       // Used for the upper and lower bounds of the timeline
-      var min_date = "2025-02-16";
+      var min_date = "2025-02-13";
       var max_date = "2026-02-28";
 
       // Configuration for the Timeline
@@ -533,7 +533,16 @@
         }
         // Show them
         else {
-          items.add(items_to_toggle);
+          items_to_toggle.forEach(checkAndAdd);
+          //items.add(items_to_toggle);
+        }
+      }
+
+      function checkAndAdd(item) {
+        try {
+          items.add(item);
+        } catch(e) {
+          return;
         }
       }
 
