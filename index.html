@@ -49,6 +49,10 @@
         color: #f0f0f0;
       }
 
+      button {
+        font-size: 20px;
+      }
+
       input[type="checkbox"] {
           width: 20px;
           height: 20px;
@@ -465,13 +469,17 @@
         },
       ]);
 
+      // Used for the upper and lower bounds of the timeline
+      var min_date = "2025-02-11";
+      var max_date = "2026-02-28";
+
       // Configuration for the Timeline
       var options = {
         selectable: false
         , autoResize: false
         //, zoomMax: 5875000000
-        , min: new Date("2025-02-11")
-        , max: new Date("2026-02-28")
+        , min: new Date(min_date)
+        , max: new Date(max_date)
         , template: template
       };
 
@@ -530,11 +538,25 @@
 
       // For navigating to either extreme of the timeline
       function viewEarliest() {
-        timeline.moveTo("2022-01-01"); // an arbitrarily early date
+        timeline.moveTo(min_date); // an arbitrarily early date
+      }
+
+      function viewEarlier() {
+        window_start = new Date(timeline.getWindow().start);
+        window_start.setMonth(window_start.getMonth() - 3);
+        console.log("View banners starting from " + window_start);
+        timeline.moveTo(window_start);
+      }
+
+      function viewLater() {
+        window_start = new Date(timeline.getWindow().start);
+        window_start.setMonth(window_start.getMonth() + 3);
+        console.log("View banners starting from " + window_start);
+        timeline.moveTo(window_start);
       }
 
       function viewLatest() {
-        timeline.moveTo(new Date());
+        timeline.moveTo(max_date);
       }
 
       // After the page loads, set the initial date range and max zoom level to avoid wonkiness, like floating nodes that don't belong in the current time window
@@ -544,13 +566,14 @@
         initialStartDate.setFullYear(2025);
         initialStartDate.setHours(0, 0, 0, 0);
 
-        console.log("Start Date = " + initialStartDate);
+        //console.log("Start Date = " + initialStartDate);
 
+        // A window of roughly 2 months + 8 days seems good, in terms of what fits in the frame for me
         initialEndDate = new Date(initialStartDate);
         initialEndDate.setMonth(initialEndDate.getMonth() + 2);
         initialEndDate.setDate(initialEndDate.getDate() + 8);
 
-        console.log("End Date = " + initialEndDate);
+        //console.log("End Date = " + initialEndDate);
 
         timeline.setOptions(
           {
@@ -563,8 +586,12 @@
       }
     </script>
     
-    <div style="position:absolute; top: 40px; left: 40px; background: #555; border: 2px solid #ddd; padding: 10px 20px;">
-      <div><button id="btn_earliest" onclick="viewEarliest()"><<</button> <label for="btn_earliest">Go to Beginning</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="btn_latest">Go to End</label> <button id="btn_latest" onclick="viewLatest()">>></button></div>
+    <div style="position:absolute; top: 40px; left: 40px; background: #555; border: 2px solid #ddd; padding: 10px 20px; border-radius: 12px;">
+      <div>
+        <button id="btn_earliest" onclick="viewEarliest()"><<</button> <button id="btn_earlier" onclick="viewEarlier()"><</button>
+        <div style="float: right">
+          <button id="btn_later" onclick="viewLater()">></button> <button id="btn_latest" onclick="viewLatest()">>></button></div>
+        </div>
       <br>
       <div><input id="show_story" type="checkbox" checked /> <label for="show_story">Main Story Banners</label></div>
       <div><input id="show_event" type="checkbox" checked /> <label for="show_event">Event Banners</label></div>
