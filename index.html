@@ -7,7 +7,11 @@
     <!-- load handlebars for templating, and create a template -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
     <script id="item-template" type="text/x-handlebars-template">
-      <img src="./images/{{unit1_ele}}.png"> {{unit1}}
+      <img src="./images/{{unit1_ele}}.png">
+      {{#if unit1_ele2}}
+      <img src="./images/{{unit1_ele2}}.png">
+      {{/if}}
+       {{unit1}}
       {{#if unit2}}
       <br><img src="./images/{{unit2_ele}}.png"> {{unit2}}
       {{/if}}
@@ -28,7 +32,7 @@
       {{/if}}
       <br><br>
       <span class="banner">
-        <img src="./images/unnamed({{img}}).jpg">
+        <img src="./images/unnamed({{img}}).webp" width="512" height="237">
       </span>
     </script>
 
@@ -472,7 +476,7 @@
           img: 113
           , unit1: "Megumi Aikawa 6 (Unison)"
           , unit1_ele: "thunder"
-          , unit2_ele: "ice"
+          , unit1_ele2: "ice"
           , start: "2026-02-26"
           , title: "2026-02-26"
           , className: "limited"
